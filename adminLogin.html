@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log Masuk Admin</title>
+    <link rel="icon" type="image/png" href="uitmlogo(1).png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background: url('bgAdmin.jpg') no-repeat center center fixed;
+    background-size: cover;
+    position: relative;
+}
+
+body::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.5); /* 0.5 = 50% pudar */
+    z-index: -1;
+}
+
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* Seksyen Header */
+        .header-top {
+            background-color: #32004b;
+            color: white;
+            padding: 30px;
+            display: flex;
+            justify-content: center; 
+            align-items: center;
+            height: 80px;
+        }
+
+        .header-top .contact-info {
+            color: #FFFFFF;
+            font-size: 14px;
+            display: flex;
+            gap: 20px; 
+            align-items: center;
+        }
+
+        .header-top .contact-info .contact-item {
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .header-top .contact-info img {
+            width: 20px;
+            height: 20px;
+            vertical-align: middle;
+        }
+
+        .header-top .contact-info a {
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .header-top .contact-info a:hover {
+            text-decoration: underline;
+            color: #f0f0f0;
+        }
+
+        /* Gaya Borang Log Masuk */
+        .login-container {
+            max-width: 400px;
+            margin: 90px auto;
+            padding: 20px;
+            background: #d9d9d9;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            position: relative;
+        }
+
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+            animation: bounce 3s infinite;
+        }
+
+        .logo-container img {
+            width: 70px;
+            height: auto;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-20px);
+            }
+            60% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .login-container h2 {
+            color: #32004b;
+            margin-bottom: 25px;
+        }
+
+        .login-container label {
+            font-weight: bold;
+            color: #32004b;
+            margin-bottom: 5px;
+            display: block;
+            position: relative;
+        }
+
+        .login-container input[type="text"],
+        .login-container input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .login-container input:focus {
+            border-color: #4b1664;
+            outline: none;
+            box-shadow: 0 0 5px rgba(75, 22, 100, 0.5);
+        }
+
+        .login-container button {
+            background-color: #32004b;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s, transform 0.3s;
+            width: 100%;
+            position: relative;
+        }
+
+        .login-container button:hover {
+            background-color: #4b1664;
+            transform: translateY(-2px);
+            background: linear-gradient(135deg, #4b1664, #32004b);
+        }
+
+        .login-container button:active {
+            transform: translateY(0);
+        }
+
+        .loading-spinner {
+            display: none;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4b1664;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            position: absolute;
+            top: 50%;
+            right: -40px;
+            transform: translateY(-50%);
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .tooltip {
+            display: none;
+            position: absolute;
+            background-color: rgba(50, 0, 75, 0.8);
+            color: white;
+            padding: 5px;
+            border-radius: 4px;
+            font-size: 12px;
+            top: -35px;
+            left: 0;
+            white-space: nowrap;
+        }
+
+        .login-container input:hover + .tooltip {
+            display: block;
+        }
+
+        .error-message {
+            color: red;
+            margin-top: 10px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        /* Modal Styling */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 400px;
+            text-align: center;
+            border-radius: 8px;
+        }
+
+        .modal-content p {
+            margin-bottom: 20px;
+        }
+
+        .modal-content button {
+            padding: 10px 20px;
+            background-color: #32004b;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .modal-content button:hover {
+            background-color: #4b1664;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #32004b;
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header-top">
+        <div class="contact-info">
+            <div class="contact-item">
+                <img src="call_icon.png" alt="Ikon Telefon">
+                <a href="tel:+6054067027">+605 - 406 7027</a>
+            </div>
+            <div class="contact-item">
+                <img src="mail_icon.png" alt="Ikon E-mel">
+                <a href="mailto:unitkokurikulum@uitm.edu.my">unitkokurikulum@uitm.edu.my</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="login-container">
+        <div class="logo-container">
+            <img src="kesatria_logo(1).png" alt="Logo Unit Kokurikulum">
+        </div>
+        <h2>Log Masuk Admin</h2>
+        <form id="loginForm" action="admin_login.php" method="POST" onsubmit="handleSubmit(event)">
+            <label for="username">Nama Pengguna</label>
+            <input type="text" id="username" name="username" required>
+            <label for="password">Kata Laluan</label>
+            <input type="password" id="password" name="password" required>
+            <button type="submit">Log Masuk</button>
+            <div id="loading-spinner" class="loading-spinner"></div>
+        </form>
+    </div>
+
+    <footer>
+        <p>Contact us at: unitkokurikulum@uitm.edu.my | +605 - 406 7027</p>
+        <p>&copy; 2024 Universiti Teknologi MARA. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        function handleSubmit(event) {
+            const spinner = document.getElementById('loading-spinner');
+            spinner.style.display = 'block';
+        }
+
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const status = urlParams.get('status');
+            if (status === 'failed') {
+                alert('Log masuk gagal. Sila semak nama pengguna dan kata laluan anda.');
+            }
+        };
+    </script>
+</body>
+</html>
